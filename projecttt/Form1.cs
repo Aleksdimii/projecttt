@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -19,30 +19,21 @@ namespace ShapeDrawer
 
         private List<Shape> shapes = new List<Shape>();
 
-        private System.Windows.Forms.Timer timerRectangle;
-        private System.Windows.Forms.Timer timerTriangle;
-        private System.Windows.Forms.Timer timerCircle;
-
         public Form1()
         {
             InitializeComponent();
 
+            Button btnRectangle = new Button() { Text = "Правоъгълник", Location = new Point(10, 10) };
+            Button btnTriangle = new Button() { Text = "Триъгълник", Location = new Point(130, 10) };
+            Button btnCircle = new Button() { Text = "Кръг", Location = new Point(250, 10) };
 
-            btnRectangle.Click += (s, e) => timerRectangle.Start();
-            btnTriangle.Click += (s, e) => timerTriangle.Start();
-            btnCircle.Click += (s, e) => timerCircle.Start();
+            btnRectangle.Click += (s, e) => AddShape(ShapeType.Rectangle);
+            btnTriangle.Click += (s, e) => AddShape(ShapeType.Triangle);
+            btnCircle.Click += (s, e) => AddShape(ShapeType.Circle);
 
             this.Controls.Add(btnRectangle);
             this.Controls.Add(btnTriangle);
             this.Controls.Add(btnCircle);
-
-            timerRectangle = new System.Windows.Forms.Timer { Interval = 3000 };
-            timerTriangle = new System.Windows.Forms.Timer { Interval = 2000 };
-            timerCircle = new System.Windows.Forms.Timer { Interval = 4000 };
-
-            timerRectangle.Tick += (s, e) => AddShape(ShapeType.Rectangle);
-            timerTriangle.Tick += (s, e) => AddShape(ShapeType.Triangle);
-            timerCircle.Tick += (s, e) => AddShape(ShapeType.Circle);
 
             this.DoubleBuffered = true;
             this.ClientSize = new Size(600, 400);
@@ -76,7 +67,7 @@ namespace ShapeDrawer
                         e.Graphics.FillRectangle(Brushes.Green, shape.Bounds);
                         break;
                     case ShapeType.Circle:
-                        e.Graphics.FillEllipse(Brushes.Blue, shape.Bounds);
+                        e.Graphics.FillEllipse(Brushes.Red, shape.Bounds);
                         break;
                     case ShapeType.Triangle:
                         var p1 = new Point(shape.Bounds.X + shape.Bounds.Width / 2, shape.Bounds.Y);
