@@ -1,93 +1,36 @@
-﻿namespace projecttt
+﻿namespace ShapeDrawer
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
+
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        private System.Windows.Forms.Button btnRectangle;
+        private System.Windows.Forms.Button btnTriangle;
+        private System.Windows.Forms.Button btnCircle;
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            timerTriangle = new System.Windows.Forms.Timer(components);
-            timerCircle = new System.Windows.Forms.Timer(components);
-            timerRectangle = new System.Windows.Forms.Timer(components);
-            btnRectangle = new Button();
-            btnCircle = new Button();
-            btnTriangle = new Button();
-            SuspendLayout();
-            // 
-            // timerRectangle
-            // 
-            timerRectangle.Tick += timer3_Tick;
-            // 
-            // btnRectangle
-            // 
-            btnRectangle.Location = new Point(612, 253);
-            btnRectangle.Name = "btnRectangle";
-            btnRectangle.Size = new Size(75, 23);
-            btnRectangle.TabIndex = 0;
-            btnRectangle.Text = "Rectangle";
-            btnRectangle.UseVisualStyleBackColor = true;
-            // 
-            // btnCircle
-            // 
-            btnCircle.Location = new Point(281, 253);
-            btnCircle.Name = "btnCircle";
-            btnCircle.Size = new Size(75, 23);
-            btnCircle.TabIndex = 1;
-            btnCircle.Text = "Circle";
-            btnCircle.UseVisualStyleBackColor = true;
-            // 
-            // btnTriangle
-            // 
-            btnTriangle.Location = new Point(29, 253);
-            btnTriangle.Name = "btnTriangle";
-            btnTriangle.Size = new Size(75, 23);
-            btnTriangle.TabIndex = 2;
-            btnTriangle.Text = "Triangle";
-            btnTriangle.UseVisualStyleBackColor = true;
-            // 
-            // Form1
-            // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(btnTriangle);
-            Controls.Add(btnCircle);
-            Controls.Add(btnRectangle);
-            Name = "Form1";
-            Text = "Form1";
-            ResumeLayout(false);
+            this.btnRectangle = new System.Windows.Forms.Button();
+            this.btnTriangle = new System.Windows.Forms.Button();
+            this.btnCircle = new System.Windows.Forms.Button();
+
+            this.btnRectangle.Text = "Правоъгълник";
+            this.btnRectangle.Location = new System.Drawing.Point(10, 10);
+
+            this.btnTriangle.Text = "Триъгълник";
+            this.btnTriangle.Location = new System.Drawing.Point(120, 10);
+
+            this.btnCircle.Text = "Кръг";
+            this.btnCircle.Location = new System.Drawing.Point(230, 10);
+
+            this.Controls.Add(this.btnRectangle);
+            this.Controls.Add(this.btnTriangle);
+            this.Controls.Add(this.btnCircle);
+
+            this.Text = "Форми";
+            this.ClientSize = new System.Drawing.Size(600, 400);
         }
-
-        #endregion
-
-        private System.Windows.Forms.Timer timerTriangle;
-        private System.Windows.Forms.Timer timerCircle;
-        private System.Windows.Forms.Timer timerRectangle;
-        private Button btnRectangle;
-        private Button btnCircle;
-        private Button btnTriangle;
     }
 }
+
