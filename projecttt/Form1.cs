@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ShapeDrawer
+namespace ShapeDrawerWithThreadsAndTimers
 {
     public partial class Form1 : Form
     {
@@ -20,55 +20,95 @@ namespace ShapeDrawer
 
         private List<Shape> shapes = new List<Shape>();
 
+        private System.Windows.Forms.Timer rectangleTimer;
+        private System.Windows.Forms.Timer triangleTimer;
+        private System.Windows.Forms.Timer circleTimer;
+
+        private bool rectangleThreadStarted = false;
+        private bool triangleThreadStarted = false;
+        private bool circleThreadStarted = false;
+
         public Form1()
         {
-            InitializeComponent();
 
-            // Бутоните
+            this.DoubleBuffered = true;
+            this.ClientSize = new Size(600, 400);
+
             Button btnRectangle = new Button() { Text = "Правоъгълник", Location = new Point(10, 10) };
             Button btnTriangle = new Button() { Text = "Триъгълник", Location = new Point(130, 10) };
             Button btnCircle = new Button() { Text = "Кръг", Location = new Point(250, 10) };
 
-            btnRectangle.Click += (s, e) => StartShapeThread(ShapeType.Rectangle, 3000);
-            btnTriangle.Click += (s, e) => StartShapeThread(ShapeType.Triangle, 2000);
-            btnCircle.Click += (s, e) => StartShapeThread(ShapeType.Circle, 4000);
+            btnRectangle.Click += BtnRectangle_Click;
+            btnTriangle.Click += BtnTriangle_Click;
+            btnCircle.Click += BtnCircle_Click;
 
             this.Controls.Add(btnRectangle);
             this.Controls.Add(btnTriangle);
             this.Controls.Add(btnCircle);
-
-            this.DoubleBuffered = true;
-            this.ClientSize = new Size(600, 400);
         }
 
-        private void StartShapeThread(ShapeType type, int delayMs)
+        private void BtnRectangle_Click(object sender, EventArgs e)
         {
-            Thread thread = new Thread(() =>
+            if (!rectangleThreadStarted)
             {
-                Thread.Sleep(delayMs);
-
-                Rectangle bounds = GenerateRandomRectangle();
-
-                Shape newShape = new Shape { Type = type, Bounds = bounds };
-
-                this.Invoke((MethodInvoker)(() =>
+                rectangleThreadStarted = true;
+                new Thread(() =>
                 {
-                    shapes.Add(newShape);
-                    this.Invalidate();
-                }));
-            });
-
-            thread.IsBackground = true;
-            thread.Start();
+                    rectangleTimer = new System.Windows.Forms.Timer();
+                    rectangleTimer.Interval = 3000;
+                    rectangleTimer.Tick += (s, ev) => AddShape(ShapeType.Rectangle);
+                    this.Invoke((MethodInvoker)(() => rectangleTimer.Start()));
+                })
+                { IsBackground = true }.Start();
+            }
         }
 
-        private Rectangle GenerateRandomRectangle()
+        private void BtnTriangle_Click(object sender, EventArgs e)
+        {
+            if (!triangleThreadStarted)
+            {
+                triangleThreadStarted = true;
+                new Thread(() =>
+                {
+                    triangleTimer = new System.Windows.Forms.Timer();
+                    triangleTimer.Interval = 2000;
+                    triangleTimer.Tick += (s, ev) => AddShape(ShapeType.Triangle);
+                    this.Invoke((MethodInvoker)(() => triangleTimer.Start()));
+                })
+                { IsBackground = true }.Start();
+            }
+        }
+
+        private void BtnCircle_Click(object sender, EventArgs e)
+        {
+            if (!circleThreadStarted)
+            {
+                circleThreadStarted = true;
+                new Thread(() =>
+                {
+                    circleTimer = new System.Windows.Forms.Timer();
+                    circleTimer.Interval = 4000;
+                    circleTimer.Tick += (s, ev) => AddShape(ShapeType.Circle);
+                    this.Invoke((MethodInvoker)(() => circleTimer.Start()));
+                })
+                { IsBackground = true }.Start();
+            }
+        }
+
+        private void AddShape(ShapeType type)
         {
             int w = rand.Next(40, 100);
             int h = rand.Next(40, 100);
             int x = rand.Next(0, this.ClientSize.Width - w);
             int y = rand.Next(50, this.ClientSize.Height - h);
-            return new Rectangle(x, y, w, h);
+
+            shapes.Add(new Shape
+            {
+                Type = type,
+                Bounds = new Rectangle(x, y, w, h)
+            });
+
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)
