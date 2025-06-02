@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ShapeDrawer
@@ -23,13 +24,14 @@ namespace ShapeDrawer
         {
             InitializeComponent();
 
+            // Бутоните
             Button btnRectangle = new Button() { Text = "Правоъгълник", Location = new Point(10, 10) };
             Button btnTriangle = new Button() { Text = "Триъгълник", Location = new Point(130, 10) };
             Button btnCircle = new Button() { Text = "Кръг", Location = new Point(250, 10) };
 
-            btnRectangle.Click += (s, e) => AddShape(ShapeType.Rectangle);
-            btnTriangle.Click += (s, e) => AddShape(ShapeType.Triangle);
-            btnCircle.Click += (s, e) => AddShape(ShapeType.Circle);
+            btnRectangle.Click += (s, e) => StartShapeThread(ShapeType.Rectangle, 3000);
+            btnTriangle.Click += (s, e) => StartShapeThread(ShapeType.Triangle, 2000);
+            btnCircle.Click += (s, e) => StartShapeThread(ShapeType.Circle, 4000);
 
             this.Controls.Add(btnRectangle);
             this.Controls.Add(btnTriangle);
@@ -39,20 +41,34 @@ namespace ShapeDrawer
             this.ClientSize = new Size(600, 400);
         }
 
-        private void AddShape(ShapeType type)
+        private void StartShapeThread(ShapeType type, int delayMs)
+        {
+            Thread thread = new Thread(() =>
+            {
+                Thread.Sleep(delayMs);
+
+                Rectangle bounds = GenerateRandomRectangle();
+
+                Shape newShape = new Shape { Type = type, Bounds = bounds };
+
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    shapes.Add(newShape);
+                    this.Invalidate();
+                }));
+            });
+
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private Rectangle GenerateRandomRectangle()
         {
             int w = rand.Next(40, 100);
             int h = rand.Next(40, 100);
             int x = rand.Next(0, this.ClientSize.Width - w);
             int y = rand.Next(50, this.ClientSize.Height - h);
-
-            shapes.Add(new Shape
-            {
-                Type = type,
-                Bounds = new Rectangle(x, y, w, h)
-            });
-
-            this.Invalidate();
+            return new Rectangle(x, y, w, h);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -67,7 +83,7 @@ namespace ShapeDrawer
                         e.Graphics.FillRectangle(Brushes.Green, shape.Bounds);
                         break;
                     case ShapeType.Circle:
-                        e.Graphics.FillEllipse(Brushes.Red, shape.Bounds);
+                        e.Graphics.FillEllipse(Brushes.Blue, shape.Bounds);
                         break;
                     case ShapeType.Triangle:
                         var p1 = new Point(shape.Bounds.X + shape.Bounds.Width / 2, shape.Bounds.Y);
