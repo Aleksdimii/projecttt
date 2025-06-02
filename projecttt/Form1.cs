@@ -16,6 +16,7 @@ namespace ShapeDrawerWithThreadsAndTimers
         {
             public ShapeType Type { get; set; }
             public Rectangle Bounds { get; set; }
+            public Color Color { get; set; }
         }
 
         private List<Shape> shapes = new List<Shape>();
@@ -33,6 +34,7 @@ namespace ShapeDrawerWithThreadsAndTimers
 
             this.DoubleBuffered = true;
             this.ClientSize = new Size(600, 400);
+
 
             Button btnRectangle = new Button() { Text = "Правоъгълник", Location = new Point(10, 10) };
             Button btnTriangle = new Button() { Text = "Триъгълник", Location = new Point(130, 10) };
@@ -71,7 +73,7 @@ namespace ShapeDrawerWithThreadsAndTimers
                 new Thread(() =>
                 {
                     triangleTimer = new System.Windows.Forms.Timer();
-                    triangleTimer.Interval = 2000;
+                    triangleTimer.Interval = 3000;
                     triangleTimer.Tick += (s, ev) => AddShape(ShapeType.Triangle);
                     this.Invoke((MethodInvoker)(() => triangleTimer.Start()));
                 })
@@ -87,7 +89,7 @@ namespace ShapeDrawerWithThreadsAndTimers
                 new Thread(() =>
                 {
                     circleTimer = new System.Windows.Forms.Timer();
-                    circleTimer.Interval = 4000;
+                    circleTimer.Interval = 3000;
                     circleTimer.Tick += (s, ev) => AddShape(ShapeType.Circle);
                     this.Invoke((MethodInvoker)(() => circleTimer.Start()));
                 })
@@ -102,10 +104,13 @@ namespace ShapeDrawerWithThreadsAndTimers
             int x = rand.Next(0, this.ClientSize.Width - w);
             int y = rand.Next(50, this.ClientSize.Height - h);
 
+            Color randomColor = Color.FromArgb(rand.Next(256), rand.Next(256), rand.Next(256));
+
             shapes.Add(new Shape
             {
                 Type = type,
-                Bounds = new Rectangle(x, y, w, h)
+                Bounds = new Rectangle(x, y, w, h),
+                Color = randomColor
             });
 
             this.Invalidate();
@@ -117,20 +122,25 @@ namespace ShapeDrawerWithThreadsAndTimers
 
             foreach (var shape in shapes)
             {
-                switch (shape.Type)
+                using (Pen pen = new Pen(shape.Color, 2))
                 {
-                    case ShapeType.Rectangle:
-                        e.Graphics.FillRectangle(Brushes.Green, shape.Bounds);
-                        break;
-                    case ShapeType.Circle:
-                        e.Graphics.FillEllipse(Brushes.Blue, shape.Bounds);
-                        break;
-                    case ShapeType.Triangle:
-                        var p1 = new Point(shape.Bounds.X + shape.Bounds.Width / 2, shape.Bounds.Y);
-                        var p2 = new Point(shape.Bounds.X, shape.Bounds.Bottom);
-                        var p3 = new Point(shape.Bounds.Right, shape.Bounds.Bottom);
-                        e.Graphics.FillPolygon(Brushes.Blue, new[] { p1, p2, p3 });
-                        break;
+                    switch (shape.Type)
+                    {
+                        case ShapeType.Rectangle:
+                            e.Graphics.DrawRectangle(pen, shape.Bounds);
+                            break;
+
+                        case ShapeType.Circle:
+                            e.Graphics.DrawEllipse(pen, shape.Bounds);
+                            break;
+
+                        case ShapeType.Triangle:
+                            var p1 = new Point(shape.Bounds.X + shape.Bounds.Width / 2, shape.Bounds.Y);
+                            var p2 = new Point(shape.Bounds.X, shape.Bounds.Bottom);
+                            var p3 = new Point(shape.Bounds.Right, shape.Bounds.Bottom);
+                            e.Graphics.DrawPolygon(pen, new[] { p1, p2, p3 });
+                            break;
+                    }
                 }
             }
         }
